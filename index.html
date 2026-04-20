@@ -39,14 +39,14 @@ body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--text);l
 .section-sub{color:var(--text-light);font-size:13px;margin-bottom:20px;padding-left:44px;}
 
 /* VIDEO */
-<iframe 
-  width="100%" 
-  height="360" 
+.video-block{background:linear-gradient(135deg,var(--dark),var(--mid));border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.video-block:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2);}
+.play-btn{width:52px;height:52px;min-width:52px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.play-btn svg{margin-left:4px;}
+.video-block:hover .play-btn{background:var(--orange-light);}
+.video-text h4{color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;margin-bottom:4px;}
+.video-text p{color:rgba(255,255,255,.6);font-size:12px;}
   src="https://vkvideo.ru/video-237885776_456239017" 
-  frameborder="0" 
-  allowfullscreen
-  style="border-radius: 12px; margin-top: 12px;">
-</iframe>
 
 /* SCALE */
 .scale-legend{background:var(--orange-pale);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:20px;}
