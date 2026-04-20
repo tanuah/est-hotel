@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EST-анализ отеля — Петручик Татьяна</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange:#E8450A; --orange-light:#F26522; --orange-pale:#FFF0EA;
+  --teal:#1DA89E; --teal-light:#2CC4BA;
+  --dark:#1A1A2E; --mid:#2D2D44;
+  --text:#2C2C3E; --text-light:#6B6B80;
+  --bg:#F8F7F5; --border:#E8E6E0;
+  --blue:#2D6EBF; --purple:#7B4FA6; --green:#27AE60; --yellow:#F5A623;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-text-size-adjust:100%;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--dark),var(--mid));padding:40px 20px 48px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:var(--orange);border-radius:50%;opacity:.12;}
+.header::after{content:'';position:absolute;bottom:-40px;left:-40px;width:150px;height:150px;background:var(--teal);border-radius:50%;opacity:.10;}
+.header-badge{display:inline-block;background:var(--orange);color:#fff;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:20px;margin-bottom:18px;}
+.header h1{font-family:'Montserrat',sans-serif;font-size:clamp(20px,5vw,34px);font-weight:800;color:#fff;line-height:1.25;max-width:680px;margin:0 auto 14px;}
+.header h1 span{color:var(--orange-light);}
+.header p{color:rgba(255,255,255,.7);font-size:14px;max-width:540px;margin:0 auto;}
+.author-line{margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.5);font-size:12px;}
+.author-dot{width:6px;height:6px;background:var(--orange);border-radius:50%;}
+
+/* MAIN */
+.main{max-width:880px;margin:0 auto;padding:32px 16px 60px;}
+
+/* SECTION */
+.section{background:#fff;border-radius:16px;padding:28px 24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--border);}
+.section-title{display:flex;align-items:center;font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.section-number{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--orange);color:#fff;font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;border-radius:8px;margin-right:12px;flex-shrink:0;}
+.section-sub{color:var(--text-light);font-size:13px;margin-bottom:20px;padding-left:44px;}
+
+/* VIDEO */
+.video-block{background:linear-gradient(135deg,var(--dark),var(--mid));border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.video-block:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2);}
+.play-btn{width:52px;height:52px;min-width:52px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.play-btn svg{margin-left:4px;}
+.video-block:hover .play-btn{background:var(--orange-light);}
+.video-text h4{color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;margin-bottom:4px;}
+.video-text p{color:rgba(255,255,255,.6);font-size:12px;}
+
+/* SCALE */
+.scale-legend{background:var(--orange-pale);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:20px;}
+.scale-legend h4{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--orange);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+.scale-items{display:flex;gap:16px;flex-wrap:wrap;}
+.scale-item{display:flex;align-items:center;gap:8px;font-size:13px;}
+.scale-dot{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.hint-text{font-size:13px;color:var(--text-light);line-height:1.8;}
+
+/* HOTEL NAMES */
+.hotel-names{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+.hotel-name-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block;}
+.label-our{color:var(--orange);} .label-a{color:var(--teal);} .label-b{color:var(--blue);} .label-c{color:var(--purple);}
+.hotel-name-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'Open Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
+.hotel-name-input:focus{border-color:var(--orange);}
+
+/* CRITERIA */
+.criteria-grid{display:grid;gap:16px;}
+.criterion{border:1px solid var(--border);border-radius:12px;overflow:visible;}
+.criterion-header{padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;}
+.criterion-icon{width:34px;height:34px;min-width:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.criterion-name{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--dark);}
+.criterion-desc{font-size:12px;color:var(--text-light);margin-top:2px;}
+
+/* SCORES — desktop: 4 columns */
+.scores-row{display:grid;grid-template-columns:repeat(4,1fr);}
+.score-cell{padding:10px 3px;border-right:1px solid var(--border);text-align:center;min-width:0;}
+.score-cell:last-child{border-right:none;}
+.score-cell-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.score-cell-label.our{color:var(--orange);} .score-cell-label.a{color:var(--teal);} .score-cell-label.b{color:var(--blue);} .score-cell-label.c{color:var(--purple);}
+.score-inputs{display:flex;justify-content:center;gap:2px;flex-wrap:nowrap;}
+.score-btn{width:25px;height:28px;min-width:25px;flex-shrink:0;border-radius:5px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:700;color:var(--text-light);cursor:pointer;transition:all .15s;font-family:'Montserrat',sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0;display:flex;align-items:center;justify-content:center;}
+.score-btn:hover{border-color:var(--orange);color:var(--orange);}
+.score-btn.active  {background:var(--orange);border-color:var(--orange);color:#fff;}
+.score-btn.active-a{background:var(--teal);  border-color:var(--teal);  color:#fff;}
+.score-btn.active-b{background:var(--blue);  border-color:var(--blue);  color:#fff;}
+.score-btn.active-c{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+/* ANALYZE BTN */
+.analyze-btn{width:100%;padding:17px;background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;border:none;border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(232,69,10,.3);touch-action:manipulation;}
+.analyze-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,69,10,.4);}
+.analyze-btn:active{transform:translateY(0);}
+
+/* CHART */
+.legend-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.chip{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+.chip-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.chart-container{position:relative;width:100%;max-width:480px;margin:0 auto;}
+
+/* RESULT */
+.result-block{background:linear-gradient(135deg,#F0FAF9,#E8F5FF);border:1px solid var(--teal-light);border-radius:12px;padding:20px;margin-top:20px;}
+.result-block h4{font-family:'Montserrat',sans-serif;font-weight:700;color:var(--teal);margin-bottom:10px;font-size:15px;}
+.result-text{font-size:13px;color:var(--text);line-height:1.75;}
+.result-zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.zone-card{border-radius:10px;padding:14px;font-size:13px;line-height:1.65;}
+.zone-danger{background:#FFF0EA;border:1px solid #FFCDB5;}
+.zone-ok{background:#F0FFF4;border:1px solid #B5E8C5;}
+.zone-title{font-weight:700;font-family:'Montserrat',sans-serif;margin-bottom:6px;font-size:13px;}
+.zone-danger .zone-title{color:var(--orange);}
+.zone-ok .zone-title{color:var(--green);}
+
+/* EMAIL */
+.email-section{background:linear-gradient(135deg,var(--dark),var(--mid));border-radius:16px;padding:28px 24px;color:#fff;text-align:center;}
+.email-section h3{font-family:'Montserrat',sans-serif;font-weight:800;font-size:19px;margin-bottom:8px;}
+.email-section p{color:rgba(255,255,255,.7);font-size:13px;margin-bottom:20px;}
+.email-form{display:flex;gap:10px;max-width:460px;margin:0 auto;flex-wrap:wrap;}
+.email-input{flex:1;min-width:180px;padding:13px 16px;border-radius:10px;border:none;font-size:14px;font-family:'Open Sans',sans-serif;outline:none;}
+.email-input:focus{box-shadow:0 0 0 3px rgba(232,69,10,.4);}
+.send-btn{padding:13px 24px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s;white-space:nowrap;touch-action:manipulation;}
+.send-btn:hover{background:var(--orange-light);}
+.success-msg{display:none;background:#F0FFF4;border:1px solid var(--green);border-radius:10px;padding:14px 18px;color:#1A7A3A;font-weight:600;font-size:14px;margin-top:14px;text-align:center;}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+
+/* Tablet 601–860 */
+@media(max-width:860px){
+  .hotel-names{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Tablet narrow / large phone 480–640 */
+@media(max-width:640px){
+  /* Switch to 2-column score grid */
+  .scores-row{grid-template-columns:1fr 1fr;}
+  .score-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 8px;}
+  .score-cell:nth-child(2n){border-right:none;}
+  .score-cell:nth-child(3),.score-cell:nth-child(4){border-bottom:none;}
+  .score-inputs{gap:4px;}
+  .score-btn{width:34px;height:34px;min-width:34px;font-size:13px;flex-shrink:0;}
+  .result-zones{grid-template-columns:1fr;}
+  .section{padding:20px 14px;}
+  .section-sub{padding-left:0;margin-top:6px;}
+}
+
+/* Mobile: stack hotels vertically, big buttons */
+@media(max-width:480px){
+  .scores-row{display:block;}
+  .score-cell{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 14px;border-right:none;border-bottom:1px solid var(--border);gap:8px;
+  }
+  .score-cell:last-child{border-bottom:none;}
+  .score-cell-label{font-size:11px;margin-bottom:0;width:76px;min-width:76px;text-align:left;white-space:nowrap;}
+  .score-inputs{flex:1;justify-content:flex-end;gap:5px;flex-wrap:nowrap;}
+  .score-btn{width:36px;height:36px;min-width:36px;font-size:14px;border-radius:8px;}
+  .hotel-names{grid-template-columns:1fr 1fr;}
+  .email-form{flex-direction:column;}
+  .email-input,.send-btn{width:100%;}
+}
+
+/* Very small phones */
+@media(max-width:360px){
+  .score-btn{width:32px;height:32px;min-width:32px;font-size:13px;gap:4px;}
+  .score-cell-label{width:66px;min-width:66px;font-size:10px;}
+  .score-inputs{gap:3px;}
+  .header h1{font-size:17px;}
+  .analyze-btn{font-size:14px;padding:15px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">EST-анализ · Бесплатный инструмент</div>
+  <h1>Почему у вас пустые номера,<br><span>когда соседи заняты?</span></h1>
+  <p>Сравните свой отель с конкурентами за 5 минут — и увидите, где вы теряете гостей</p>
+  <div class="author-line">
+    <div class="author-dot"></div>
+    <span>Петручик Татьяна · petruchik03.ru</span>
+    <div class="author-dot"></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- 1. VIDEO -->
+  <div class="section">
+    <div class="section-title"><span class="section-number">1</span>Сначала посмотрите короткое видео</div>
+    <div class="section-sub">Татьяна объясняет как читать результат — 4 минуты</div>
+    <a href="#" class="video-block" onclick="return false;">
+      <div class="play-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <div class="video-text">
+        <h4>Как работает EST-анализ для отелей</h4>
+        <p>Татьяна Петручик · Маркетинговое планирование · 4 мин</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- 2. INSTRUCTIONS -->
+  <div class="section">
+    <div class="section-title"><span class="section-number">2</span>Как ставить оценки</div>
+    <div class="section-sub">Прочитайте один раз — дальше всё понятно</div>
+    <div class="scale-legend">
+      <h4>Шкала оценок: от 1 до 6</h4>
+      <div class="scale-items">
+        <div class="scale-item"><div class="scale-dot" style="background:#ccc;color:#666">1</div><span>Этого совсем нет</span></div>
+        <div class="scale-item"><div class="scale-dot" style="background:var(--yellow)">3</div><span>Средний уровень</span></div>
+        <div class="scale-item"><div class="scale-dot" style="background:var(--orange)">6</div><span>Лучший на рынке</span></div>
+      </div>
+    </div>
+    <div class="hint-text">
+      <strong style="color:var(--text)">Примеры:</strong><br>
+      Цена — самые низкие среди соседей → <strong>6</strong>. Средние → <strong>3</strong>. Самые высокие → <strong>1–2</strong>.<br>
+      Сервис — в отзывах хвалят персонал → <strong>5–6</strong>. Есть жалобы → <strong>1–2</strong>.<br><br>
+      <strong style="color:var(--text)">Оценивайте честно</strong> — этот анализ только для вас. Чем честнее, тем точнее результат.
+    </div>
+  </div>
+
+  <!-- 3. SCORING -->
+  <div class="section">
+    <div class="section-title"><span class="section-number">3</span>Введите названия и расставьте оценки</div>
+    <div class="section-sub">Ваш отель + до 3 конкурентов. Можно заполнить только 2</div>
+    <div class="hotel-names">
+      <div><label class="hotel-name-label label-our">Ваш отель</label><input class="hotel-name-input" id="name-our" type="text" value="Наш отель" maxlength="22"></div>
+      <div><label class="hotel-name-label label-a">Конкурент А</label><input class="hotel-name-input" id="name-a" type="text" value="Отель А" maxlength="22"></div>
+      <div><label class="hotel-name-label label-b">Конкурент Б</label><input class="hotel-name-input" id="name-b" type="text" value="Отель Б" maxlength="22"></div>
+      <div><label class="hotel-name-label label-c">Конкурент В</label><input class="hotel-name-input" id="name-c" type="text" value="Отель В" maxlength="22"></div>
+    </div>
+    <div class="criteria-grid" id="criteria-grid"></div>
+    <div style="height:18px"></div>
+    <button class="analyze-btn" onclick="buildChart()">Построить диаграмму →</button>
+  </div>
+
+  <!-- 4. CHART -->
+  <div class="section" id="chart-section" style="display:none">
+    <div class="section-title"><span class="section-number">4</span>Ваша EST-диаграмма</div>
+    <div class="section-sub">Паутинка конкурентного анализа — чем больше площадь, тем сильнее позиция</div>
+    <div class="legend-chips" id="legend-chips"></div>
+    <div class="chart-container"><canvas id="radarChart"></canvas></div>
+    <div class="result-block">
+      <h4>👁 Что видно на вашей диаграмме</h4>
+      <div class="result-text" id="result-text"></div>
+      <div class="result-zones">
+        <div class="zone-card zone-danger">
+          <div class="zone-title">⚠ Где вы слабее конкурентов</div>
+          <div id="weak-zones" style="color:var(--text-light)">анализируем...</div>
+        </div>
+        <div class="zone-card zone-ok">
+          <div class="zone-title">✓ Ваши точки роста</div>
+          <div id="growth-zones" style="color:var(--text-light)">анализируем...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. EMAIL -->
+  <div class="email-section" id="email-section" style="display:none">
+    <h3>Получите результат на почту + бонус 🎁</h3>
+    <p>Пришлём PDF с вашей диаграммой и таблицу расчёта потенциала отеля — сколько вы теряете каждый месяц</p>
+    <div class="email-form">
+      <input class="email-input" id="email-input" type="email" placeholder="ваш@email.ru">
+      <button class="send-btn" onclick="sendResult()">Получить PDF</button>
+    </div>
+    <div class="success-msg" id="success-msg">✓ Отлично! Результат отправлен. Проверьте почту — там уже ждёт ваша диаграмма и таблица потенциала.</div>
+  </div>
+
+</div>
+
+<script>
+const criteria = [
+  {id:'price',  icon:'💰',color:'#E8450A',name:'Доступнее (Cheapest)',     desc:'Уровень цен vs конкуренты. 6 = самые низкие цены в локации'},
+  {id:'comfort',icon:'🛏',color:'#1DA89E',name:'Удобнее (Easiest)',         desc:'Удобство номеров, бронирования, инфраструктуры. 6 = максимально удобно'},
+  {id:'beauty', icon:'✨',color:'#F5A623',name:'Красивее (Hottest)',        desc:'Фото, интерьер, локация, вид. 6 = гости делятся фото в соцсетях'},
+  {id:'service',icon:'🤝',color:'#27AE60',name:'Теплее — Сервис',          desc:'Качество сервиса и атмосфера. 6 = персонал — лучшее в отзывах'},
+  {id:'booking',icon:'📱',color:'#2D6EBF',name:'Проще забронировать',      desc:'Скорость ответа, сайт, соцсети. 6 = отвечают за 5 минут'},
+  {id:'unique', icon:'🌟',color:'#7B4FA6',name:'Уникальнее (Experiencest)',desc:'Фишка, за которую запоминают. 6 = есть то, чего нет ни у кого'}
+];
+const hotelKeys  =['our','a','b','c'];
+const hotelColors={our:'#E8450A',a:'#1DA89E',b:'#2D6EBF',c:'#7B4FA6'};
+const scores={};
+hotelKeys.forEach(h=>{scores[h]={};criteria.forEach(c=>scores[h][c.id]=0);});
+
+function buildCriteriaUI(){
+  const grid=document.getElementById('criteria-grid');
+  criteria.forEach(cr=>{
+    const div=document.createElement('div');
+    div.className='criterion';
+    const rows=hotelKeys.map(h=>{
+      let btns='';
+      for(let v=1;v<=6;v++){
+        btns+=`<button class="score-btn" id="btn-${h}-${cr.id}-${v}" onclick="setScore('${h}','${cr.id}',${v})">${v}</button>`;
+      }
+      const lbl=h==='our'?'Наш отель':`Конкурент ${h.toUpperCase()}`;
+      return `<div class="score-cell">
+        <div class="score-cell-label ${h}" id="lbl-${h}-${cr.id}">${lbl}</div>
+        <div class="score-inputs">${btns}</div>
+      </div>`;
+    }).join('');
+    div.innerHTML=`
+      <div class="criterion-header">
+        <div class="criterion-icon" style="background:${cr.color}22">${cr.icon}</div>
+        <div><div class="criterion-name">${cr.name}</div><div class="criterion-desc">${cr.desc}</div></div>
+      </div>
+      <div class="scores-row">${rows}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+hotelKeys.forEach(h=>{
+  document.addEventListener('input',e=>{
+    if(e.target&&e.target.id===`name-${h}`){
+      const val=e.target.value.trim()||(h==='our'?'Наш отель':`Конкурент ${h.toUpperCase()}`);
+      document.querySelectorAll(`[id^="lbl-${h}-"]`).forEach(el=>el.textContent=val);
+    }
+  });
+});
+
+function setScore(hotel,crit,val){
+  scores[hotel][crit]=val;
+  for(let v=1;v<=6;v++){
+    const btn=document.getElementById(`btn-${hotel}-${crit}-${v}`);
+    if(!btn)continue;
+    btn.className='score-btn';
+    if(v===val){btn.classList.add(hotel==='our'?'active':`active-${hotel}`);}
+  }
+}
+
+let chartInst=null;
+function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');}
+
+function buildChart(){
+  const names={
+    our:document.getElementById('name-our').value||'Наш отель',
+    a:  document.getElementById('name-a').value  ||'Отель А',
+    b:  document.getElementById('name-b').value  ||'Отель Б',
+    c:  document.getElementById('name-c').value  ||'Отель В'
+  };
+  const labels=criteria.map(c=>c.name.split('(')[0].trim());
+
+  document.getElementById('chart-section').style.display='block';
+  document.getElementById('email-section').style.display='block';
+  setTimeout(()=>document.getElementById('chart-section').scrollIntoView({behavior:'smooth',block:'start'}),100);
+
+  document.getElementById('legend-chips').innerHTML=hotelKeys.map(h=>
+    `<div class="chip"><div class="chip-dot" style="background:${hotelColors[h]}"></div>${names[h]}</div>`).join('');
+
+  const alphas=['0.18','0.12','0.12','0.12'];
+  const widths=[2.5,2,2,2];
+  const datasets=hotelKeys.map((h,i)=>({
+    label:names[h],
+    data:criteria.map(c=>scores[h][c.id]||0),
+    backgroundColor:`rgba(${hexRgb(hotelColors[h])},${alphas[i]})`,
+    borderColor:hotelColors[h],
+    borderWidth:widths[i],
+    pointBackgroundColor:hotelColors[h],
+    pointRadius:i===0?4:3
+  }));
+
+  const ctx=document.getElementById('radarChart').getContext('2d');
+  if(chartInst)chartInst.destroy();
+  chartInst=new Chart(ctx,{
+    type:'radar',
+    data:{labels,datasets},
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{r:{
+        min:0,max:6,
+        ticks:{stepSize:1,font:{size:10},color:'#aaa'},
+        grid:{color:'rgba(0,0,0,0.07)'},
+        angleLines:{color:'rgba(0,0,0,0.07)'},
+        pointLabels:{font:{size:11,family:'Open Sans',weight:'600'},color:'#2C2C3E'}
+      }}
+    }
+  });
+  generateResult(names.our);
+}
+
+function generateResult(nameOur){
+  const cNames=criteria.map(c=>c.name.split('(')[0].trim());
+  const our=criteria.map(c=>scores.our[c.id]);
+  const comps=['a','b','c'].map(h=>criteria.map(c=>scores[h][c.id]));
+  const weak=[],growth=[];
+  criteria.forEach((cr,i)=>{
+    const maxComp=Math.max(...comps.map(d=>d[i]));
+    const myScore=our[i];
+    if(myScore===0)return;
+    if(myScore<maxComp-1)weak.push(cNames[i]);
+    const filled=comps.map(d=>d[i]).filter(v=>v>0);
+    const avg=filled.length?filled.reduce((a,b)=>a+b,0)/filled.length:0;
+    if(avg<3&&myScore>=4)growth.push(cNames[i]);
+    if(avg<3&&myScore===0)growth.push(`${cNames[i]} — никто не занял!`);
+  });
+  document.getElementById('result-text').innerHTML=
+    `Не пугайтесь, если паутинка выглядит неровно — так и должно быть.<br><br>
+    <strong>Там, где все конкуренты поставили 5–6</strong> — занятая территория, конкурировать там дорого.<br>
+    <strong>Там, где у всех 1–2 или ноль</strong> — свободное место на рынке. Вот где скрыта уникальность <em>${nameOur}</em>. Именно это место стоит занять первым.`;
+  document.getElementById('weak-zones').innerHTML=weak.length
+    ?weak.map(w=>`• ${w}`).join('<br>')
+    :'• Вы не уступаете конкурентам по заполненным критериям';
+  document.getElementById('growth-zones').innerHTML=growth.length
+    ?growth.map(g=>`• ${g}`).join('<br>')
+    :'• Заполните все критерии для точного анализа';
+}
+
+function sendResult(){
+  const inp=document.getElementById('email-input');
+  if(!inp.value||!inp.value.includes('@')){inp.style.outline='2px solid red';inp.focus();return;}
+  inp.style.outline='';
+  document.getElementById('success-msg').style.display='block';
+  inp.disabled=true;
+  const btn=document.querySelector('.send-btn');
+  btn.disabled=true;btn.textContent='✓ Отправлено';btn.style.background='#27AE60';
+}
+
+buildCriteriaUI();
+</script>
+</body>
+</html>
